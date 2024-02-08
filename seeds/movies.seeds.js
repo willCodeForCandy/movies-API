@@ -1,3 +1,6 @@
+require('dotenv').config();
+const mongoose = require('mongoose');
+const Movie = require('../src/api/models/Movie');
 const movies = [
   {
     title: 'The Matrix',
@@ -36,3 +39,24 @@ const movies = [
     genre: 'Comedia romántica'
   }
 ];
+
+const movieModels = movies.map((movie) => new Movie(movie));
+
+mongoose
+  .connect(process.env.DB_URL)
+  .then(async () => {
+    const allMovies = await Movie.find();
+    if (allMovies.length) {
+      await Movie.collection.drop();
+    }
+  })
+  .catch((error) => {
+    console.log('Error deleting data:', error);
+  })
+  .then(async () => {
+    await Movie.insertMany(movieModels);
+  })
+  .catch((error) => {
+    console.log('Error creating data:', error);
+  })
+  .finally(() => mongoose.disconnect());
