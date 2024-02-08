@@ -5,6 +5,7 @@ const movieRoutes = require('./src/api/routes/movie');
 const app = express();
 const PORT = 3000;
 connect();
+
 app.use(express.json()); //para poder leer los json del req.body
 app.use('/movies', movieRoutes);
 app.use('*', (req, res, next) => {
